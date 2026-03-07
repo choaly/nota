@@ -1,0 +1,85 @@
+.noteView {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    background-color: #e8e3dc;
+}
+
+.noteTitle {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    color: var(--text-color);
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+    padding: 0.25rem 0;
+    width: 100%;
+}
+
+.noteTitle::placeholder {
+    color: #999;
+}
+
+.noteEditor {
+    flex: 1;
+    padding: 1.5rem;
+    border: none;
+    border-radius: 12px;
+    background-color: var(--note-editor-color);
+    font-size: 1rem;
+    font-family: inherit;
+    resize: none;
+    margin-bottom: 2rem;
+    outline: none;
+}
+
+.noteEditor::placeholder {
+    color: #999;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.leftButtons {
+    display: flex;
+    gap: 1rem;
+}
+
+.saveButton,
+.quizButton,
+.deleteButton {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.saveButton {
+    background-color: var(--dark-chocolate);
+    color: white;
+}
+
+.quizButton {
+    background-color: var(--dark-chocolate);
+    color: white;
+}
+
+.deleteButton {
+    background-color: var(--dark-chocolate);
+    color: white;
+}
+
+.saveButton:hover,
+.quizButton:hover,
+.deleteButton:hover {
+    opacity: 0.85;
+}

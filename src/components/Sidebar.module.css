@@ -1,0 +1,116 @@
+.sidebar {
+    background-color: var(--clay-gray);
+
+    width: 280px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-right: 1px solid #bfb4a5;
+    position: relative;
+}
+
+  /* sidebarCollapsed: {
+    width: '60px',
+    padding: '1.5rem 0.5rem'
+  }, */
+
+.collapseButton {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    /* background-color: var(--gray-brown-light); */
+    background-color: var(--clay-gray);
+    color: #bfb4a5;
+    border: none;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    /* z-index: 10; */
+}
+
+.newNoteButton {
+    color: white;
+    border-radius: 8px;
+    padding: 0.75rem;
+}
+
+/* triggers the transition */
+.newNoteButton:hover {
+    opacity: 0.85;
+}
+
+
+.searchBox {
+    position: relative;
+    width: 80%;
+    margin: 0;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-brown);
+}
+
+.searchInput {
+    width: 100%;
+    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+    border: 1px solid var(--gray-brown-light);
+    border-radius: 8px;
+    /* font-size: 0.95rem; */
+}
+
+.sidebarTitle {
+    font-size: 1.25rem;
+    text-align: left;
+    /* font-weight: 600; */
+     /* top right bottom left*/
+    margin: 1rem 0 0 0;
+}
+
+.noteList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.noteItem {
+    padding: 0.875rem;
+    background-color: var(--clay-gray);
+    border-radius: 8px;
+    cursor: pointer;
+    /* transition: background-color 0.2s; */
+    border: none;
+    text-align: left;
+    color: black;
+}
+
+.noteItem:hover {
+    background-color: var(--gray-brown-light);
+}
+
+.noteItemActive {
+    background-color: var(--gray-brown-light);
+}
+
+.noteItemInactive {
+    background-color: var(--clay-gray);
+}
+
+.noteTitle {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.noteTime {
+    font-size: 0.8rem;
+    color: #938164;
+}

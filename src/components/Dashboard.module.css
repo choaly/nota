@@ -1,0 +1,112 @@
+.mainView {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.welcome {
+    /* background-color: aliceblue; */
+    margin-bottom: 2rem;
+}
+
+.welcomeTitle {
+    font-size: 2rem;
+    font-weight: bold;
+    /* color: #000; */
+    margin-bottom: 0.5rem;
+}
+
+.welcomeSubtitle {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.mainHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.mainTitle {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #000;
+}
+
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.mainSearchInput {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  width: 200px;
+}
+
+.iconButton {
+  background-color: #6b5d4f;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.noteCard {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-sizing: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.noteCardTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 0.75rem;
+}
+
+.noteCardDescription {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.noteCardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.noteCardTime {
+  font-size: 0.85rem;
+  color: #999;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.noteCardTag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background-color: pink;
+}
