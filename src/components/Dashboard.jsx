@@ -2,7 +2,7 @@ import {useState} from 'react'
 import styles from './Dashboard.module.css';
 import { Search, Clock, Grid, List, ChevronLeft } from 'lucide-react';
 
-export default function Dashboard({ notes }) {
+export default function Dashboard({ notes, onNoteClick }) {
     const [viewMode, setViewMode] = useState('grid');
 
     // Helper function to format the date
@@ -69,6 +69,7 @@ export default function Dashboard({ notes }) {
                             <div
                                 key={note.id}
                                 className={styles.noteCard}
+                                onClick={() => onNoteClick(note)}
                                 onMouseOver={(e) => {
                                     e.currentTarget.style.transform = 'translateY(-4px)';
                                     e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
@@ -77,6 +78,7 @@ export default function Dashboard({ notes }) {
                                     e.currentTarget.style.transform = 'translateY(0)';
                                     e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
                                 }}
+                                style={{ cursor: 'pointer' }}
                             >
                                 <h3 className={styles.noteCardTitle}>{note.title}</h3>
                                 <p className={styles.noteCardDescription}>

@@ -32,24 +32,54 @@ function App() {
     setCurrentView('noteView'); // Switch to the note editor view
   };
 
+  // Handler function for when user clicks on an existing note to edit it
+  const handleEditNote = (note) => {
+    setCurrentNote(note); // Set the note to edit
+    setCurrentView('noteView'); // Switch to the note editor view
+  };
+
   // Handler function to go back to dashboard
   const handleBackToDashboard = () => {
     setCurrentView('dashboard'); // Switch back to dashboard view
     setCurrentNote(null); // Clear the current note
   };
 
-  // Handler function to save a note
+  // Handler function to save a note (create new or update existing)
   const handleSaveNote = (noteData) => {
-    const newNote = {
-      id: Date.now(), // Simple unique ID using timestamp
-      title: noteData.title,
-      content: noteData.content,
-      createdAt: new Date().toISOString(), // Save the current date/time
-      updatedAt: new Date().toISOString()
-    };
+    if (currentNote) {
+      // Editing existing note - update it
+      const updatedNotes = notes.map(note =>
+        note.id === currentNote.id
+          ? {
+              ...note,
+              title: noteData.title,
+              content: noteData.content,
+              updatedAt: new Date().toISOString()
+            }
+          : note
+      );
+      setNotes(updatedNotes);
+    } else {
+      // Creating new note
+      const newNote = {
+        id: Date.now(), // Simple unique ID using timestamp
+        title: noteData.title,
+        content: noteData.content,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      // Add the new note to the beginning of the array
+      setNotes([newNote, ...notes]);
+    }
+  };
 
-    // Add the new note to the beginning of the array
-    setNotes([newNote, ...notes]);
+  // Handler function to delete a note
+  const handleDeleteNote = (noteId) => {
+    // Confirm before deleting
+    if (window.confirm('Are you sure you want to delete this note?')) {
+      const filteredNotes = notes.filter(note => note.id !== noteId);
+      setNotes(filteredNotes);
+    }
   };
 
   return (
@@ -58,17 +88,20 @@ function App() {
       <div className="container">
         <Sidebar
           onNewNote={handleNewNote}
+          onNoteClick={handleEditNote}
           notes={notes}
           // collapsed={sidebarCollapsed}
           // onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         />
         {/* Conditional rendering: show Dashboard or NoteView based on currentView */}
         {currentView === 'dashboard' ? (
-          <Dashboard notes={notes} />
+          <Dashboard notes={notes} onNoteClick={handleEditNote} />
         ) : (
           <NoteView
+            note={currentNote}
             onBack={handleBackToDashboard}
             onSave={handleSaveNote}
+            onDelete={handleDeleteNote}
           />
         )}
       </div>

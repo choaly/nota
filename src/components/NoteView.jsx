@@ -1,12 +1,23 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import styles from './NoteView.module.css';
 
-export default function NoteView({ onBack, onSave }) {
-    // State to hold the note title
-    const [noteTitle, setNoteTitle] = useState('New Note...');
+export default function NoteView({ note, onBack, onSave, onDelete }) {
+    // State to hold the note title - initialize with existing note or default
+    const [noteTitle, setNoteTitle] = useState(note ? note.title : 'New Note...');
 
-    // State to hold the note content
-    const [noteContent, setNoteContent] = useState('');
+    // State to hold the note content - initialize with existing note or empty
+    const [noteContent, setNoteContent] = useState(note ? note.content : '');
+
+    // Update state when note prop changes (when switching between notes)
+    useEffect(() => {
+        if (note) {
+            setNoteTitle(note.title);
+            setNoteContent(note.content);
+        } else {
+            setNoteTitle('New Note...');
+            setNoteContent('');
+        }
+    }, [note]);
 
     // Handler for saving the note
     const handleSave = () => {
@@ -27,13 +38,23 @@ export default function NoteView({ onBack, onSave }) {
 
     // Handler for deleting the note
     const handleDelete = () => {
-        // TODO: Later we'll handle deletion confirmation
-        console.log('Deleting note');
-        onBack(); // Go back to dashboard
+        if (note) {
+            // Only delete if we're editing an existing note
+            onDelete(note.id);
+            onBack(); // Go back to dashboard
+        } else {
+            // If creating a new note, just go back without saving
+            onBack();
+        }
     };
 
     return (
         <main className={styles.noteView}>
+            {/* Heading to show if editing or creating */}
+            {/* <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.5rem' }}>
+                {note ? 'Editing Note' : 'New Note'}
+            </p> */}
+
             {/* Editable note title */}
             <input
                 type="text"

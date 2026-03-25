@@ -2,7 +2,7 @@ import styles from './Sidebar.module.css';
 import { Search, ChevronLeft } from 'lucide-react';
 import {useState} from 'react'
 
-export default function Sidebar({ onNewNote, notes }) {
+export default function Sidebar({ onNewNote, notes, onNoteClick }) {
     const [activeNote, setActiveNote] = useState(null);
 
     // Helper function to format the date
@@ -65,7 +65,10 @@ export default function Sidebar({ onNewNote, notes }) {
                             <button
                                 key={note.id}
                                 className={`${styles.noteItem} ${activeNote === note.id ? styles.noteItemActive : styles.noteItemInactive}`}
-                                onClick={() => setActiveNote(note.id)}
+                                onClick={() => {
+                                    setActiveNote(note.id);
+                                    onNoteClick(note);
+                                }}
                             >
                                 <div className={styles.noteTitle}>{note.title}</div>
                                 <div className={styles.noteTime}>{formatDate(note.createdAt)}</div>
