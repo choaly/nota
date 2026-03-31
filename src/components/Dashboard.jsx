@@ -1,9 +1,9 @@
-import {useState} from 'react'
+import { useState } from 'react';
 import styles from './Dashboard.module.css';
-import { Search, Clock, Grid, List, ChevronLeft } from 'lucide-react';
+import { Search, Clock } from 'lucide-react';
 
 export default function Dashboard({ notes, onNoteClick }) {
-    const [viewMode, setViewMode] = useState('grid');
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Helper function to format the date
     const formatDate = (dateString) => {
@@ -44,18 +44,11 @@ export default function Dashboard({ notes, onNoteClick }) {
                             type="text"
                             placeholder="Search notes..."
                             className={styles.mainSearchInput}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                         />
                         <button className={styles.iconButton}>
                             <Search size={20} />
-                        </button>
-                        <button 
-                            className={{
-                            ...styles.iconButton,
-                            backgroundColor: viewMode === 'grid' ? '#4a3f30' : '#6b5d4f'
-                            }}
-                            onClick={() => setViewMode('grid')}
-                        >
-                            <Grid size={20} />
                         </button>
                     </div>
                 </div>
@@ -65,9 +58,19 @@ export default function Dashboard({ notes, onNoteClick }) {
                             No notes yet. Click "New Note" to create your first note!
                         </p>
                     ) : (
-                        notes.map((note) => (
+                        [...notes]  // Create a copy to avoid mutating props
+                            .filter((note) => {
+                                // Filter by search query (search in title and content)
+                                const query = searchQuery.toLowerCase();
+                                return (
+                                    note.title.toLowerCase().includes(query) ||
+                                    note.content.toLowerCase().includes(query)
+                                );
+                            })
+                            .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+                            .map((note) => (
                             <div
-                                key={note.id}
+                                key={note._id}
                                 className={styles.noteCard}
                                 onClick={() => onNoteClick(note)}
                                 onMouseOver={(e) => {
@@ -87,17 +90,8 @@ export default function Dashboard({ notes, onNoteClick }) {
                                 <div className={styles.noteCardFooter}>
                                     <div className={styles.noteCardTime}>
                                         <Clock size={14} />
-                                        {formatDate(note.createdAt)}
+                                        {formatDate(note.updatedAt)}
                                     </div>
-                                    <span
-                                        className={styles.noteCardTag}
-                                        style={{
-                                            backgroundColor: '#4a3f30',
-                                            color: '#fff'
-                                        }}
-                                    >
-                                        Note
-                                    </span>
                                 </div>
                             </div>
                         ))

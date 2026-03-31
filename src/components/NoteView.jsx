@@ -40,7 +40,7 @@ export default function NoteView({ note, onBack, onSave, onDelete }) {
     const handleDelete = () => {
         if (note) {
             // Only delete if we're editing an existing note
-            onDelete(note.id);
+            onDelete(note._id);
             onBack(); // Go back to dashboard
         } else {
             // If creating a new note, just go back without saving

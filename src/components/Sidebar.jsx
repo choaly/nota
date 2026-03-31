@@ -4,6 +4,7 @@ import {useState} from 'react'
 
 export default function Sidebar({ onNewNote, notes, onNoteClick }) {
     const [activeNote, setActiveNote] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Helper function to format the date
     const formatDate = (dateString) => {
@@ -50,6 +51,8 @@ export default function Sidebar({ onNewNote, notes, onNoteClick }) {
                         type="text"
                         placeholder="Search notes..."
                         className={styles.searchInput}
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
                 
@@ -61,17 +64,28 @@ export default function Sidebar({ onNewNote, notes, onNoteClick }) {
                             No notes yet
                         </p>
                     ) : (
-                        notes.slice(0, 10).map((note) => (
+                        [...notes]  // Create a copy to avoid mutating props
+                            .filter((note) => {
+                                // Filter by search query (search in title and content)
+                                const query = searchQuery.toLowerCase();
+                                return (
+                                    note.title.toLowerCase().includes(query) ||
+                                    note.content.toLowerCase().includes(query)
+                                );
+                            })
+                            .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+                            .slice(0, 10)
+                            .map((note) => (
                             <button
-                                key={note.id}
-                                className={`${styles.noteItem} ${activeNote === note.id ? styles.noteItemActive : styles.noteItemInactive}`}
+                                key={note._id}
+                                className={`${styles.noteItem} ${activeNote === note._id ? styles.noteItemActive : styles.noteItemInactive}`}
                                 onClick={() => {
-                                    setActiveNote(note.id);
+                                    setActiveNote(note._id);
                                     onNoteClick(note);
                                 }}
                             >
                                 <div className={styles.noteTitle}>{note.title}</div>
-                                <div className={styles.noteTime}>{formatDate(note.createdAt)}</div>
+                                <div className={styles.noteTime}>{formatDate(note.updatedAt)}</div>
                             </button>
                         ))
                     )}

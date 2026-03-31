@@ -7,6 +7,7 @@ import Header from "./components/Header"
 import Sidebar from "./components/Sidebar"
 import Dashboard from "./components/Dashboard"
 import NoteView from "./components/NoteView"
+import { getNotes, createNote, updateNote, deleteNote } from "./services/notes.js"
 
 function App() {
   // State to track which view to show: 'dashboard' or 'noteView'
@@ -16,15 +17,30 @@ function App() {
   const [currentNote, setCurrentNote] = useState(null);
 
   // State to store all notes - initialize directly from localStorage
-  const [notes, setNotes] = useState(() => {
-    const savedNotes = localStorage.getItem('notes');
-    return savedNotes ? JSON.parse(savedNotes) : [];
-  });
+  const [notes, setNotes] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Save notes to localStorage whenever notes change
   useEffect(() => {
-    localStorage.setItem('notes', JSON.stringify(notes));
-  }, [notes]); // Runs whenever 'notes' changes
+    async function fetchNotes() {
+      setLoading(true);
+
+      try {
+        const data = await getNotes();
+        setNotes(data.notes);
+      }
+      catch(error) {
+        setError(error.message);
+      }
+      finally { //finally LWAYS runs try succeeded or catch fired
+        setLoading(false);
+      }
+    }
+
+    fetchNotes();
+  }, []); // useEffect runs once on mount
 
   // Handler function for when "New Note" button is clicked
   const handleNewNote = () => {
@@ -45,39 +61,32 @@ function App() {
   };
 
   // Handler function to save a note (create new or update existing)
-  const handleSaveNote = (noteData) => {
+  const handleSaveNote = async (noteData) => {
     if (currentNote) {
       // Editing existing note - update it
-      const updatedNotes = notes.map(note =>
-        note.id === currentNote.id
-          ? {
-              ...note,
-              title: noteData.title,
-              content: noteData.content,
-              updatedAt: new Date().toISOString()
-            }
-          : note
+      const data = await updateNote(currentNote._id, noteData);
+      
+      const updatedNotes = notes.map(note => 
+        note._id === currentNote._id ? data.note : note
       );
       setNotes(updatedNotes);
     } else {
       // Creating new note
-      const newNote = {
-        id: Date.now(), // Simple unique ID using timestamp
+      const data = await createNote({
         title: noteData.title,
         content: noteData.content,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
+      });
       // Add the new note to the beginning of the array
-      setNotes([newNote, ...notes]);
+      setNotes([data.note, ...notes]);
     }
   };
 
   // Handler function to delete a note
-  const handleDeleteNote = (noteId) => {
+  const handleDeleteNote = async (noteId) => {
     // Confirm before deleting
     if (window.confirm('Are you sure you want to delete this note?')) {
-      const filteredNotes = notes.filter(note => note.id !== noteId);
+      await deleteNote(noteId);
+      const filteredNotes = notes.filter(note => note._id !== noteId);
       setNotes(filteredNotes);
     }
   };
@@ -94,7 +103,12 @@ function App() {
           // onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         />
         {/* Conditional rendering: show Dashboard or NoteView based on currentView */}
-        {currentView === 'dashboard' ? (
+
+        {loading ? (
+          <p>Loading notes...</p>
+        ) : error ? (
+          <p>{error}</p>
+        ) : currentView === 'dashboard' ? (
           <Dashboard notes={notes} onNoteClick={handleEditNote} />
         ) : (
           <NoteView

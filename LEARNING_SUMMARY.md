@@ -295,6 +295,98 @@ const handleDeleteNote = (noteId) => {
 
 ---
 
+### Step 11: Sorting Notes by Last Updated
+
+**What We Did:**
+Sorted notes by most recently edited (updatedAt) in both Sidebar and Dashboard.
+
+**Code:**
+```javascript
+// In Sidebar and Dashboard
+[...notes]  // Create a copy using spread operator
+    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+    .slice(0, 10)  // Only in Sidebar - limit to 10 notes
+    .map((note) => (
+        // Render note UI
+    ))
+```
+
+**Key Learning:**
+
+**1. Spread Operator for Copying Arrays:**
+```javascript
+[...notes]  // Creates shallow copy of array
+```
+- **Why copy?** `.sort()` mutates the original array
+- **Props are read-only** - we can't modify them directly
+- **Shallow copy** is sufficient here (we're not modifying nested objects)
+
+**2. Array.sort() with Comparison Function:**
+```javascript
+.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+```
+- **`(a, b)`** - Two items being compared
+- **Return value:**
+  - Negative → `a` comes first
+  - Positive → `b` comes first
+  - Zero → keep same order
+- **`b - a`** = Descending order (newest first)
+- **`a - b`** = Ascending order (oldest first)
+
+**3. Date Comparison:**
+```javascript
+new Date(b.updatedAt) - new Date(a.updatedAt)
+```
+- `new Date()` converts ISO string to Date object (milliseconds since 1970)
+- Subtracting dates gives numeric difference in milliseconds
+- Example:
+  ```javascript
+  Note A: updatedAt = "2026-03-25T10:00:00.000Z"
+  Note B: updatedAt = "2026-03-25T11:00:00.000Z"
+
+  new Date(B) - new Date(A) = positive number
+  // B is more recent, so B comes first
+  ```
+
+**4. Method Chaining:**
+```javascript
+[...notes]
+    .sort(...)      // Step 1: Sort by most recent
+    .slice(0, 10)   // Step 2: Take first 10
+    .map(...)       // Step 3: Render each one
+```
+- Each method returns a new array
+- Chain them for clean, readable code
+- Order matters! Sort before slice before map
+
+**Visual Example:**
+
+Before sorting:
+```
+[
+  { title: "Note 1", updatedAt: "2026-03-25T08:00:00" },
+  { title: "Note 2", updatedAt: "2026-03-25T12:00:00" },
+  { title: "Note 3", updatedAt: "2026-03-25T10:00:00" }
+]
+```
+
+After sorting:
+```
+[
+  { title: "Note 2", updatedAt: "2026-03-25T12:00:00" },  // Most recent
+  { title: "Note 3", updatedAt: "2026-03-25T10:00:00" },
+  { title: "Note 1", updatedAt: "2026-03-25T08:00:00" }
+]
+```
+
+**Important Notes:**
+- Always copy props before mutating operations (sort, reverse, splice)
+- Use spread operator `[...]` for shallow copies
+- Use `structuredClone()` for deep copies (if needed)
+- Sort is stable in modern JavaScript (maintains relative order of equal elements)
+
+---
+
 ## Key React Concepts Learned
 
 ### 1. **State Management**
@@ -361,6 +453,14 @@ setItems(items.map(item =>
 
 // Remove item
 setItems(items.filter(item => item.id !== targetId))
+
+// Sort array (must copy first - sort mutates!)
+const sorted = [...items].sort((a, b) => a.value - b.value)
+
+// Sort by date (descending - newest first)
+const byDate = [...items].sort((a, b) =>
+    new Date(b.updatedAt) - new Date(a.updatedAt)
+)
 ```
 
 **Objects:**
