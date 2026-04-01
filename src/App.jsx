@@ -62,32 +62,41 @@ function App() {
 
   // Handler function to save a note (create new or update existing)
   const handleSaveNote = async (noteData) => {
-    if (currentNote) {
-      // Editing existing note - update it
-      const data = await updateNote(currentNote._id, noteData);
-      
-      const updatedNotes = notes.map(note => 
-        note._id === currentNote._id ? data.note : note
-      );
-      setNotes(updatedNotes);
-    } else {
-      // Creating new note
-      const data = await createNote({
-        title: noteData.title,
-        content: noteData.content,
-      });
-      // Add the new note to the beginning of the array
-      setNotes([data.note, ...notes]);
+    try {
+      if (currentNote) {
+        // Editing existing note - update it
+        const data = await updateNote(currentNote._id, noteData);
+        
+        const updatedNotes = notes.map(note => 
+          note._id === currentNote._id ? data.note : note
+        );
+        setNotes(updatedNotes);
+      } else {
+        // Creating new note
+        const data = await createNote({
+          title: noteData.title,
+          content: noteData.content,
+        });
+        // Add the new note to the beginning of the array
+        setNotes([data.note, ...notes]);
+      }
+    } catch(error) {
+        alert('Failed to save note: ' + error.message);
+        throw error;  // re-throw so NoteView knows the save failed
     }
   };
 
   // Handler function to delete a note
   const handleDeleteNote = async (noteId) => {
-    // Confirm before deleting
-    if (window.confirm('Are you sure you want to delete this note?')) {
-      await deleteNote(noteId);
-      const filteredNotes = notes.filter(note => note._id !== noteId);
-      setNotes(filteredNotes);
+    try {
+      // Confirm before deleting
+      if (window.confirm('Are you sure you want to delete this note?')) {
+        await deleteNote(noteId);
+        const filteredNotes = notes.filter(note => note._id !== noteId);
+        setNotes(filteredNotes);
+      }
+    } catch(error) {
+      alert(error.message);
     }
   };
 

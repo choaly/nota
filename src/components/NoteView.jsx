@@ -8,6 +8,8 @@ export default function NoteView({ note, onBack, onSave, onDelete }) {
     // State to hold the note content - initialize with existing note or empty
     const [noteContent, setNoteContent] = useState(note ? note.content : '');
 
+    const [saving, setSaving] = useState(false); //a boolean that's true while the save is in progress. Use it to disable the save button so the user can't double-click.
+
     // Update state when note prop changes (when switching between notes)
     useEffect(() => {
         if (note) {
@@ -20,7 +22,7 @@ export default function NoteView({ note, onBack, onSave, onDelete }) {
     }, [note]);
 
     // Handler for saving the note
-    const handleSave = () => {
+    const handleSave = async () => {
         // Don't save if title is empty or still default
         if (!noteTitle.trim() || noteTitle === 'New Note...') {
             alert('Please enter a title for your note!');
@@ -28,12 +30,21 @@ export default function NoteView({ note, onBack, onSave, onDelete }) {
         }
 
         // Call the parent's save function with note data
-        onSave({
+        const noteData = {
             title: noteTitle,
             content: noteContent
-        });
+        }
 
-        onBack(); // Go back to dashboard
+        setSaving(true);
+        try {
+            await onSave(noteData);
+            onBack(); // Go back to dashboard
+        } catch(error) { // save failed
+            //stay on page
+        } finally {
+            setSaving(false);
+        }
+
     };
 
     // Handler for deleting the note
@@ -75,9 +86,10 @@ export default function NoteView({ note, onBack, onSave, onDelete }) {
             {/* Action buttons container */}
             <div className={styles.buttonContainer}>
                 <div className={styles.leftButtons}>
-                    <button className={styles.saveButton} onClick={handleSave}>
-                        Save
+                    <button className={styles.saveButton} onClick={handleSave} disabled={saving}>
+                        {saving ? 'Saving...' : 'Save'}
                     </button>
+
                     <button className={styles.quizButton}>
                         Generate Quiz
                     </button>

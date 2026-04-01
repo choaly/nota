@@ -202,9 +202,196 @@ npm install express mongoose cors dotenv
 
 ---
 
+### ✅ Step 2: Set Up Express Server with Basic Routing (COMPLETED)
+
+**What we did**:
+1. Created `server.js` with Express app instance
+2. Added environment variables with `dotenv` (`.env` file for PORT and CONNECTION_STRING)
+3. Added middleware: `express.json()`, `cors()`, `morgan('dev')`
+4. Created health check route at `/`
+5. Created RESTful route stubs for `/api/notes`
+
+**What was created**:
+- `backend/server.js` - Express server entry point
+- `backend/.env` - Environment variables (PORT, CONNECTION_STRING)
+
+**Key learnings**:
+- **Ports are exclusive** — only one process can bind to a port at a time (`EADDRINUSE` error). macOS AirPlay uses port 5000, so we used 5001
+- **Environment variables** — configuration that changes between environments lives outside code (Twelve-Factor App pattern)
+- **Middleware** — functions that run between request and route handler in a pipeline. Order matters: define middleware before routes
+- **`express.json()`** — parses JSON request bodies so `req.body` works
+- **`cors()`** — allows cross-origin requests (React on :5173 → Express on :5001)
+- **`morgan('dev')`** — logs requests for debugging
+- **Factory functions** — `require('express')` returns a function; `express()` creates the app
+
+---
+
+### ✅ Step 3: Connect to MongoDB Atlas (COMPLETED)
+
+**What we did**:
+1. Set up MongoDB Atlas free cluster
+2. Created database user and whitelisted IP
+3. Created `config/db.js` with async connection function
+4. Wired connection into `server.js` startup (connect first, then listen)
+
+**What was created**:
+- `backend/config/db.js` - Database connection module
+
+**Key learnings**:
+- **Separation of concerns** — database connection logic in its own file, not in `server.js`
+- **`async/await`** — `mongoose.connect()` returns a promise; `await` pauses until it resolves; without `await`, `try/catch` won't catch async errors
+- **Startup order** — connect to database before starting the server; if DB is down, fail fast rather than accepting requests you can't fulfill
+- **`module.exports`** — CommonJS pattern for sharing code between files (vs ES modules `export/import`)
+- **Connection string** — contains credentials, stored in `.env`, never committed to git
+
+---
+
+### ✅ Step 4: Create Mongoose Schema (COMPLETED)
+
+**What we did**:
+1. Created `models/Note.js` with Mongoose schema and model
+2. Defined `title` (String, default: 'Untitled Note') and `content` (String) fields
+3. Used `{ timestamps: true }` for automatic `createdAt`/`updatedAt`
+
+**What was created**:
+- `backend/models/Note.js` - Note schema and model
+
+**Key learnings**:
+- **Schema vs Model** — schema defines the shape (blueprint), model provides methods to interact with the database (`Note.find()`, `Note.create()`, etc.)
+- **`timestamps: true`** — Mongoose auto-manages `createdAt` and `updatedAt`
+- **MongoDB `_id`** — MongoDB generates unique `_id` (with underscore), not `id`. This caused a frontend bug later when comparing IDs
+
+---
+
+### ✅ Step 5: Build API Routes - CRUD Endpoints (COMPLETED)
+
+**What we did**:
+1. Created `routes/notes.js` with Express Router
+2. Implemented all five CRUD endpoints with real database operations
+3. Mounted router in `server.js` at `/api/notes`
+
+**What was created**:
+- `backend/routes/notes.js` - Notes API router
+
+**Endpoints**:
+| Method | Path | Mongoose Method | Status Code |
+|--------|------|----------------|-------------|
+| GET | `/` | `Note.find({})` | 200 |
+| GET | `/:id` | `Note.findById(id)` | 200 / 404 |
+| POST | `/` | `Note.create(body)` | 201 |
+| PUT | `/:id` | `Note.findByIdAndUpdate(id, body, { new: true })` | 200 |
+| DELETE | `/:id` | `Note.findByIdAndDelete(id)` | 200 |
+
+**Key learnings**:
+- **Express Router** — groups related routes into separate files; paths become relative to mount point
+- **Route vs Endpoint** — route is the implementation (Express code), endpoint is the interface (what clients see)
+- **`{ new: true }`** — tells Mongoose to return the updated document, not the original
+- **Status codes** — 200 OK, 201 Created, 404 Not Found, 500 Internal Server Error
+- **`req.params`** vs **`req.body`** vs **`req.query`** — URL path parameters, request body data, and query string parameters respectively
+- **`res.json()` not `return`** — routes send responses over the network, not to calling code
+- **Shorthand property notation** — `res.json({ notes })` is shorthand for `res.json({ notes: notes })` when variable name matches key
+- **`curl` for testing APIs** — command-line tool for making HTTP requests; browser can only test GET routes
+  ```bash
+  # Create a note (POST)
+  curl -X POST http://localhost:5001/api/notes \
+    -H "Content-Type: application/json" \
+    -d '{"title": "Test Note", "content": "Hello from the API"}'
+
+  # Get all notes (GET)
+  curl http://localhost:5001/api/notes
+
+  # Update a note (PUT) — replace <id> with actual MongoDB _id
+  curl -X PUT http://localhost:5001/api/notes/<id> \
+    -H "Content-Type: application/json" \
+    -d '{"title": "Updated Title"}'
+
+  # Delete a note (DELETE)
+  curl -X DELETE http://localhost:5001/api/notes/<id>
+  ```
+
+---
+
+### ✅ Step 6: Replace localStorage with API Calls (COMPLETED)
+
+**What we did**:
+1. Created `src/services/notes.js` — frontend API service layer
+2. Updated `App.jsx` to fetch notes from API on mount
+3. Updated `handleSaveNote` and `handleDeleteNote` to call API before updating state
+4. Replaced all `note.id` references with `note._id` across components
+
+**What was created**:
+- `src/services/notes.js` - Frontend API service layer
+
+**Key learnings**:
+- **Service layer pattern** — centralize API calls in one file; if the URL or library changes, update one place
+- **CommonJS vs ES modules** — backend uses `require`/`module.exports`, frontend (React/Vite) uses `import`/`export`
+- **`fetch()` API** — browser built-in for HTTP requests; defaults to GET; POST/PUT need `method`, `headers`, and `body` options
+- **`Content-Type: application/json`** header — tells the server the body is JSON (needed for `express.json()` to parse it)
+- **Async useEffect pattern** — can't make useEffect callback async directly; define async function inside and call it
+- **Server is source of truth** — React state is now a local copy of server data; always update server first, then sync local state
+- **`_id` vs `id` bug** — MongoDB uses `_id`; all frontend references needed updating. Debugged by tracing data flow across the full stack
+
+---
+
+### ✅ Step 7: Loading States and Error Handling (COMPLETED)
+
+**What we did**:
+1. Added `loading` and `error` state variables
+2. Updated `fetchNotes` with `try/catch/finally` for proper error handling
+3. Added conditional rendering chain: loading → error → normal view
+
+**Key learnings**:
+- **`try/catch/finally`** — `finally` always runs regardless of success or failure; ideal for cleanup like `setLoading(false)`
+- **Conditional rendering chain** — chained ternaries for mutually exclusive states: `loading ? ... : error ? ... : normalView`
+- **`&&` vs ternary** — `&&` for simple one-off conditionals; chained ternary for "show exactly one of N options"
+- **JSX curly braces** — toggle between JSX mode (literal text) and JavaScript evaluation; needed each time you're inside a JSX tag and want to evaluate a variable
+
+---
+
+### ✅ Step 8: Test the Full Stack (COMPLETED)
+
+**What we tested**:
+1. ✅ Create — new notes appear in sidebar and dashboard
+2. ✅ Read — notes persist after page refresh (from database, not local state)
+3. ✅ Update — edits persist after refresh
+4. ✅ Delete — notes removed from UI and database
+5. ✅ Error state — error message displays when backend is down
+
+**Key learnings**:
+- **Three places to check when debugging** — UI, backend terminal (morgan logs), database (Atlas Browse Collections)
+- **`_id` bug** — the biggest debugging exercise; traced from morgan log (`PUT /api/notes/undefined`) back to frontend code using wrong field name
+- **Systematic debugging** — identify which layer the bug is in, add console.log to check values, compare expected vs actual
+
+---
+
+## Phase 2 Complete! 🎉
+
+**What was built**:
+- Express server with middleware pipeline
+- MongoDB Atlas cloud database connection
+- Mongoose schema with automatic timestamps
+- RESTful CRUD API (5 endpoints)
+- Frontend service layer with fetch API
+- Loading and error states
+- Full-stack data flow: React → fetch → Express → Mongoose → MongoDB Atlas → back
+
+**Architecture**:
+```
+React (localhost:5173)
+  → src/services/notes.js (API calls)
+    → Express (localhost:5001)
+      → routes/notes.js (route handlers)
+        → models/Note.js (Mongoose schema)
+          → MongoDB Atlas (cloud database)
+```
+
+---
+
 ## Next Steps
 
-Continue with **Step 2**: Set up Express server with basic routing
+Continue with **Phase 2 Step 9 (Optional)**: Handle edge cases (network failures, validation, etc.)
+
+Or move to **Phase 3**: Advanced features (authentication, collaboration, AI features)
 
 ---
 

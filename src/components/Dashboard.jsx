@@ -7,7 +7,10 @@ export default function Dashboard({ notes, onNoteClick }) {
 
     // Helper function to format the date
     const formatDate = (dateString) => {
+        if (!dateString) return '';
         const date = new Date(dateString);
+        if (isNaN(date.getTime())) return '';
+
         const now = new Date();
         const diffInMs = now - date;
         const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
@@ -63,8 +66,8 @@ export default function Dashboard({ notes, onNoteClick }) {
                                 // Filter by search query (search in title and content)
                                 const query = searchQuery.toLowerCase();
                                 return (
-                                    note.title.toLowerCase().includes(query) ||
-                                    note.content.toLowerCase().includes(query)
+                                    (note.title || '').toLowerCase().includes(query) ||
+                                    (note.content || '').toLowerCase().includes(query)
                                 );
                             })
                             .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))

@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5001 ;
 
 const app = express();
 
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(cors());
 app.use(morgan('dev'));
 
@@ -20,6 +20,15 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/notes', notesRouter);
+
+app.use((req,res) => {
+    res.status(404).json({ message: "No routes matched the request." });
+});
+
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(500).json({ message:"Internal server error." });
+});
 
 async function startServer() {
     await config(); //connect to db
