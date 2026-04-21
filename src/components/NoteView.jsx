@@ -1,14 +1,16 @@
 import {useState, useEffect} from 'react'
 import styles from './NoteView.module.css';
+import { generateQuiz } from '../services/quiz';
+import Quiz from './Quiz';
+import { ChevronLeft } from 'lucide-react';
 
 export default function NoteView({ note, onBack, onSave, onDelete }) {
-    // State to hold the note title - initialize with existing note or default
     const [noteTitle, setNoteTitle] = useState(note ? note.title : 'New Note...');
-
-    // State to hold the note content - initialize with existing note or empty
     const [noteContent, setNoteContent] = useState(note ? note.content : '');
-
     const [saving, setSaving] = useState(false); //a boolean that's true while the save is in progress. Use it to disable the save button so the user can't double-click.
+
+    const [quizQuestions, setQuizQuestions] = useState(null);
+    const [loadingQuiz, setLoadingQuiz] = useState(false);
 
     // Update state when note prop changes (when switching between notes)
     useEffect(() => {
@@ -59,45 +61,68 @@ export default function NoteView({ note, onBack, onSave, onDelete }) {
         }
     };
 
+    const handleGenerateQuiz = async () => {
+        if (!noteContent.trim()) {
+            alert('Write some notes first before generating a quiz!');
+            return;
+        }
+        setLoadingQuiz(true);
+        
+        try {
+            const data = await generateQuiz(noteContent);
+            setQuizQuestions(data.questions);
+        } catch (error) {
+            alert('Failed to generate quiz: ' + error.message);
+        } finally {
+            setLoadingQuiz(false);
+        }
+    }
+
     return (
-        <main className={styles.noteView}>
-            {/* Heading to show if editing or creating */}
-            {/* <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.5rem' }}>
-                {note ? 'Editing Note' : 'New Note'}
-            </p> */}
+        <>
+            <main className={styles.noteView}>
+                <button className={styles.backButton} onClick={onBack}>
+                    <ChevronLeft size={20} />
+                    Back
+                </button>
 
-            {/* Editable note title */}
-            <input
-                type="text"
-                className={styles.noteTitle}
-                value={noteTitle}
-                onChange={(e) => setNoteTitle(e.target.value)}
-                placeholder="Untitled Note"
-            />
+                {/* Editable note title */}
+                <input
+                    type="text"
+                    className={styles.noteTitle}
+                    value={noteTitle}
+                    onChange={(e) => setNoteTitle(e.target.value)}
+                    placeholder="Untitled Note"
+                />
 
-            {/* Text editor area */}
-            <textarea
-                className={styles.noteEditor}
-                placeholder="New note..."
-                value={noteContent}
-                onChange={(e) => setNoteContent(e.target.value)}
-            />
+                {/* Text editor area */}
+                <textarea
+                    className={styles.noteEditor}
+                    placeholder="New note..."
+                    value={noteContent}
+                    onChange={(e) => setNoteContent(e.target.value)}
+                />
 
-            {/* Action buttons container */}
-            <div className={styles.buttonContainer}>
-                <div className={styles.leftButtons}>
-                    <button className={styles.saveButton} onClick={handleSave} disabled={saving}>
-                        {saving ? 'Saving...' : 'Save'}
-                    </button>
+                {/* Action buttons container */}
+                <div className={styles.buttonContainer}>
+                    <div className={styles.leftButtons}>
+                        <button className={styles.saveButton} onClick={handleSave} disabled={saving}>
+                            {saving ? 'Saving...' : 'Save'}
+                        </button>
 
-                    <button className={styles.quizButton}>
-                        Generate Quiz
+                        <button className={styles.quizButton} onClick={handleGenerateQuiz} disabled={loadingQuiz}>
+                            {loadingQuiz ? 'Generating...' : 'Generate Quiz'}
+                        </button>
+                    </div>
+                    <button className={styles.deleteButton} onClick={handleDelete}>
+                        Delete
                     </button>
                 </div>
-                <button className={styles.deleteButton} onClick={handleDelete}>
-                    Delete
-                </button>
-            </div>
-        </main>
+            </main>
+            {quizQuestions && (
+                <Quiz questions={quizQuestions} onClose={() => setQuizQuestions(null)} />
+            )}
+        </>
+        
     )
 }

@@ -6,7 +6,6 @@
 
     background-color: var(--gray-brown);
     height: 100px;
-    /* border-bottom: 1px solid #8b7d6b; */
 }
 
 .logo {
@@ -15,28 +14,56 @@
     color: var(--text-color);
 }
 
-.button {
-  border-radius: 8px;
-  border: none;
-  height: 2.75rem;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.dropdownWrapper {
+    position: relative;
 }
 
-.profile-image {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background-color: #8b7d6b;
+.button {
+    border-radius: 8px;
+    border: none;
+    height: 2.75rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 0.5rem;
 
+    background-color: var(--dark-chocolate);
+    color: white;
+}
+
+.button:hover {
+    opacity: 0.9;
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    min-width: 180px;
+    z-index: 100;
+    overflow: hidden;
+}
+
+.dropdownItem {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--text-color);
+}
+
+.dropdownItem:hover {
+    background-color: var(--clay-gray);
 }

@@ -2,6 +2,7 @@ html, body {
   margin: 0;
   padding: 0;
   box-sizing: border-box; /* Optional: ensures padding and border are included in the element's total width and height */
+  font-family: 'DM Sans', system-ui, sans-serif;
 }
 :root {
   /* font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;

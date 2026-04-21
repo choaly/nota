@@ -76,15 +76,6 @@ export default function Dashboard({ notes, onNoteClick }) {
                                 key={note._id}
                                 className={styles.noteCard}
                                 onClick={() => onNoteClick(note)}
-                                onMouseOver={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-4px)';
-                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-                                }}
-                                onMouseOut={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
-                                }}
-                                style={{ cursor: 'pointer' }}
                             >
                                 <h3 className={styles.noteCardTitle}>{note.title}</h3>
                                 <p className={styles.noteCardDescription}>

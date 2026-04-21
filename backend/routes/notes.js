@@ -16,7 +16,8 @@ function sanitize(str) {
 
 notesRouter.get('/', async (req, res) => {
     try {
-        const notes = await Note.find({});
+        //Note.find({}) with an empty object means "find all notes, no filter." Note.find({ user: req.userId }) means "find notes where the user field matches this ID."
+        const notes = await Note.find({ user: req.userId });
         res.json({ notes })
     } catch(error) {
         res.status(500).json({ message: error.message })
@@ -33,11 +34,14 @@ notesRouter.get('/:id', async (req, res) => {
         const note = await Note.findById(req.params.id);
 
         if (!note) {
-            res.status(404).json({ message: "No note found"});
-            return;
-        } else {
-            res.json({ note });
+            return res.status(404).json({ message: "No note found"});
         }
+
+        if (note.user.toString() !== req.userId) {
+            return res.status(403).json({ message: "Forbidden" });
+        }
+
+        res.json({ note });
     }
     catch(error) {
         res.status(500).json({ message: error.message })
@@ -48,8 +52,9 @@ notesRouter.post('/', async (req, res) => {
     try {
         const title = sanitize(req.body.title);
         const content = sanitize(req.body.content);
+        const user = req.userId;
 
-        const noteData = { title, content }
+        const noteData = { user, title, content }
 
         const note = await Note.create(noteData);
 
@@ -74,13 +79,19 @@ notesRouter.put('/:id', async (req, res) => {
 
         const noteData = { title, content }
 
-        const note = await Note.findByIdAndUpdate(req.params.id, noteData, { new: true, runValidators: true });
+        const note = await Note.findById(req.params.id);
 
         if (!note) {
             return res.status(404).json({ message: "Note with that ID does not exist"});
         }
 
-        res.json({ note, message:`Note ${req.params.id} updated` });
+        if (note.user.toString() !== req.userId) {
+            return res.status(403).json({message: "Forbidden"});
+        }
+
+        const updatedNote = await Note.findByIdAndUpdate(req.params.id, noteData, { new: true, runValidators: true });
+
+        res.json({ note: updatedNote, message:`Note ${req.params.id} updated` });
     }
     catch(error) {
         if (error.name === 'ValidationError') {
@@ -96,11 +107,17 @@ notesRouter.delete('/:id', async (req,res) => {
             return res.status(400).json({ message: "Invalid ID" });
         }
 
-        const note = await Note.findByIdAndDelete(req.params.id);
+        const note = await Note.findById(req.params.id);
 
         if (!note) {
             return res.status(404).json({ message: "Note with that ID does not exist"});
         }
+
+        if (note.user.toString() !== req.userId) {
+            return res.status(403).json({message: "Forbidden"});
+        }
+
+        await Note.findByIdAndDelete({ _id: req.params.id });
 
         res.json({ message:`Note ${req.params.id} deleted` });
     }

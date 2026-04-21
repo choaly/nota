@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 import Header from "./components/Header"
 import Sidebar from "./components/Sidebar"
 import Dashboard from "./components/Dashboard"
 import NoteView from "./components/NoteView"
+import ProfileSettings from "./components/ProfileSettings"
+import Login from "./components/Login"
+import Signup from "./components/Signup"
 import { getNotes, createNote, updateNote, deleteNote } from "./services/notes.js"
+import { useAuth } from './context/AuthContext'
 
 function App() {
   // State to track which view to show: 'dashboard' or 'noteView'
@@ -22,8 +24,13 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const { user } = useAuth();
+  const[authMode, setAuthMode] = useState('login');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   // Save notes to localStorage whenever notes change
   useEffect(() => {
+    if (!user) return;  // don't fetch if not logged in
     async function fetchNotes() {
       setLoading(true);
 
@@ -40,7 +47,7 @@ function App() {
     }
 
     fetchNotes();
-  }, []); // useEffect runs once on mount
+  }, [user]); // useEffect runs when user changes. empty [] means runs once on mount
 
   // Handler function for when "New Note" button is clicked
   const handleNewNote = () => {
@@ -102,32 +109,45 @@ function App() {
 
   return (
     <>
-      <Header />
-      <div className="container">
-        <Sidebar
-          onNewNote={handleNewNote}
-          onNoteClick={handleEditNote}
-          notes={notes}
-          // collapsed={sidebarCollapsed}
-          // onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-        />
-        {/* Conditional rendering: show Dashboard or NoteView based on currentView */}
-
-        {loading ? (
-          <p>Loading notes...</p>
-        ) : error ? (
-          <p>{error}</p>
-        ) : currentView === 'dashboard' ? (
-          <Dashboard notes={notes} onNoteClick={handleEditNote} />
+      {!user ? (
+        authMode === 'login' ? (
+          <Login switchToSignup={() => setAuthMode('signup')} />
         ) : (
-          <NoteView
-            note={currentNote}
-            onBack={handleBackToDashboard}
-            onSave={handleSaveNote}
-            onDelete={handleDeleteNote}
-          />
-        )}
-      </div>
+          <Signup switchToLogin={() => setAuthMode('login')} />
+        )
+      ) : (
+        <>
+          <Header onNavigate={(view) => { setCurrentView(view); setCurrentNote(null); }} />
+          <div className="container">
+            <Sidebar
+              onNewNote={handleNewNote}
+              onNoteClick={handleEditNote}
+              notes={notes}
+              collapsed={sidebarCollapsed}
+              onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+            />
+            {/* Conditional rendering: show Dashboard or NoteView based on currentView */}
+
+            {loading ? (
+              <p className="loadingState">Loading notes...</p>
+            ) : error ? (
+              <p className="errorState">{error}</p>
+            ) : currentView === 'dashboard' ? (
+              <Dashboard notes={notes} onNoteClick={handleEditNote} />
+            ) : currentView === 'profileSettings' ? (
+              <ProfileSettings onBackToDashboard={handleBackToDashboard} />
+            ) : (
+              <NoteView
+                note={currentNote}
+                onBack={handleBackToDashboard}
+                onSave={handleSaveNote}
+                onDelete={handleDeleteNote}
+              />
+            )}
+          </div>
+        </>
+      )}
+
     </>
   )
 }

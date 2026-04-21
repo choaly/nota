@@ -70,9 +70,14 @@
   background-color: #fff;
   border-radius: 12px;
   padding: 1.5rem;
-  box-sizing: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
+}
+
+.noteCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .noteCardTitle {

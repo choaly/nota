@@ -1,0 +1,99 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.modal {
+    background-color: #E5DFD3;
+    border-radius: 16px;
+    padding: 2.5rem;
+    width: 500px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    text-align: center;
+}
+
+.progress {
+    font-size: 0.95rem;
+    color: #7a6e63;
+    margin: 0 0 1.5rem 0;
+    font-weight: 500;
+}
+
+.questionText {
+    font-size: 1.2rem;
+    color: #2B1F14;
+    margin: 0 0 2rem 0;
+    line-height: 1.5;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.optionButton {
+    padding: 0.85rem 1.25rem;
+    border: 1px solid #2B1F14;
+    border-radius: 10px;
+    background-color: white;
+    font-size: 1rem;
+    color: #2B1F14;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition: background-color 0.15s;
+}
+
+.optionButton:hover:not(:disabled) {
+    background-color: rgba(43, 31, 20, 0.08);
+}
+
+.correct {
+    background-color: #d4edda;
+    border-color: #28a745;
+    color: #155724;
+}
+
+.incorrect {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+    color: #721c24;
+}
+
+.completeTitle {
+    font-size: 1.75rem;
+    color: #2B1F14;
+    margin: 0 0 1rem 0;
+}
+
+.scoreText {
+    font-size: 1.15rem;
+    color: #4A3628;
+    margin: 0 0 2rem 0;
+}
+
+.closeButton {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #4A3628;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.closeButton:hover {
+    opacity: 0.85;
+}

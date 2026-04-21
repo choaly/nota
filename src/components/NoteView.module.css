@@ -6,6 +6,24 @@
     background-color: #e8e3dc;
 }
 
+.backButton {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: none;
+    border: none;
+    color: #7a6e63;
+    font-size: 0.95rem;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 1rem;
+}
+
+.backButton:hover {
+    color: #2B1F14;
+}
+
 .noteTitle {
     font-size: 2rem;
     font-weight: bold;

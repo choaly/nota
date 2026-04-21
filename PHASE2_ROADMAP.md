@@ -364,24 +364,59 @@ npm install express mongoose cors dotenv
 
 ---
 
+### ✅ Step 9: Handle Edge Cases (COMPLETED)
+
+**What we did**:
+1. Added schema validation (trim, maxlength) to Mongoose model
+2. Hardened Express routes: ID validation (400), missing note checks (404), `return` after responses, input sanitization, `runValidators: true`, `ValidationError` → 400
+3. Added server-level safety nets: body size limit, 404 handler for unknown routes, global error handler
+4. Updated frontend service layer with `handleResponse` helper to detect HTTP errors from `fetch`
+5. Added try/catch to save and delete handlers in App.jsx with error alerts
+6. Added `saving` state to NoteView — disabled button, "Saving..." text, only navigates away on success
+7. Added null guards (`|| ''`) in Dashboard and Sidebar for search filter and formatDate
+
+**Files modified**:
+- `backend/models/Note.js` — schema validation (trim, maxlength, default)
+- `backend/routes/notes.js` — ID validation, sanitization, return on 404, ValidationError handling
+- `backend/server.js` — body limit, 404 handler, global error handler
+- `src/services/notes.js` — `handleResponse` helper for HTTP error detection
+- `src/App.jsx` — try/catch on save/delete handlers
+- `src/components/NoteView.jsx` — saving state, async save with try/catch/finally
+- `src/components/Dashboard.jsx` — null guards in filter and formatDate
+- `src/components/Sidebar.jsx` — null guards in filter and formatDate
+
+**Key learnings**:
+- **Defense in depth** — every layer validates independently; if one fails, the next catches it
+- **`fetch()` doesn't throw on HTTP errors** — only on network failures. You must check `response.ok` yourself
+- **`return` before `res.status().json()`** — without it, Express continues executing and tries to send a second response ("Cannot set headers after they are sent")
+- **`runValidators: true`** — Mongoose skips schema validation on updates by default; this opt-in is required
+- **`error.name === 'ValidationError'`** — distinguishes client errors (400) from server errors (500)
+- **Validate early, fail fast** — catch bad data as far from the database as possible
+- **Block scoping with `let`** — variables declared with `const`/`let` inside `try {}` aren't accessible outside it
+- **`finally` block** — runs regardless of success or failure; ideal for cleanup like `setSaving(false)`
+- **Re-throwing errors** — `throw error` in a catch block passes the error up to the caller, enabling parent components to react to child failures
+
+---
+
 ## Phase 2 Complete! 🎉
 
 **What was built**:
 - Express server with middleware pipeline
 - MongoDB Atlas cloud database connection
-- Mongoose schema with automatic timestamps
-- RESTful CRUD API (5 endpoints)
-- Frontend service layer with fetch API
+- Mongoose schema with automatic timestamps and validation
+- RESTful CRUD API (5 endpoints) with input validation and sanitization
+- Frontend service layer with fetch API and HTTP error detection
 - Loading and error states
+- Edge case handling across the full stack
 - Full-stack data flow: React → fetch → Express → Mongoose → MongoDB Atlas → back
 
 **Architecture**:
 ```
 React (localhost:5173)
-  → src/services/notes.js (API calls)
+  → src/services/notes.js (API calls + error detection)
     → Express (localhost:5001)
-      → routes/notes.js (route handlers)
-        → models/Note.js (Mongoose schema)
+      → routes/notes.js (validation + sanitization + route handlers)
+        → models/Note.js (schema validation)
           → MongoDB Atlas (cloud database)
 ```
 
@@ -389,9 +424,7 @@ React (localhost:5173)
 
 ## Next Steps
 
-Continue with **Phase 2 Step 9 (Optional)**: Handle edge cases (network failures, validation, etc.)
-
-Or move to **Phase 3**: Advanced features (authentication, collaboration, AI features)
+Move to **Phase 3**: Advanced features (authentication, collaboration, AI features)
 
 ---
 

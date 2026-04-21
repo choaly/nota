@@ -4,6 +4,9 @@ const cors = require('cors');
 const morgan = require('morgan');
 const config = require('./config/db');
 const notesRouter = require('./routes/notes');
+const authRouter = require('./routes/auth');
+const authenticate = require('./middleware/auth');
+const quizRouter = require('./routes/quiz')
 
 const PORT = process.env.PORT || 5001 ;
 
@@ -19,7 +22,9 @@ app.get('/', (req, res) => {
     });
 })
 
-app.use('/api/notes', notesRouter);
+app.use('/api/notes', authenticate, notesRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/quiz', authenticate, quizRouter);
 
 app.use((req,res) => {
     res.status(404).json({ message: "No routes matched the request." });
@@ -32,7 +37,7 @@ app.use((err, req, res, next) => {
 
 async function startServer() {
     await config(); //connect to db
-    //esrver starts listening for requests
+    //server starts listening for requests
     app.listen(PORT, () => {
         console.log(`Server listening on port ${PORT}`)
     });

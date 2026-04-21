@@ -3,6 +3,14 @@ const BASE_URL = 'http://localhost:5001/api/notes';
 async function handleResponse(response) {
     if (response.ok) return response.json();
 
+    // Auto-logout on expired or invalid token
+    if (response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.reload();
+        return;
+    }
+
     let data;
     try {
         data = await response.json()
@@ -15,16 +23,23 @@ async function handleResponse(response) {
 
 
 async function getNotes() {
-     const response = await fetch(BASE_URL);
-     const data = await handleResponse(response);
-     return data;
+    const token = localStorage.getItem('token'); 
+    const response = await fetch(BASE_URL, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    const data = await handleResponse(response);
+    return data;
 }
 
 async function createNote(noteData) {
+    const token = localStorage.getItem('token');
     const response = await fetch(BASE_URL, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
             title: noteData.title,
@@ -37,10 +52,12 @@ async function createNote(noteData) {
 }
 
 async function updateNote(id, noteData) {
+    const token = localStorage.getItem('token');
     const response = await fetch(BASE_URL + '/' + id, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
             title: noteData.title,
@@ -53,8 +70,12 @@ async function updateNote(id, noteData) {
 }
 
 async function deleteNote(id) {
+    const token = localStorage.getItem('token');
     const response = await fetch(BASE_URL + '/' + id, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
     });
 
     const data = await handleResponse(response);
