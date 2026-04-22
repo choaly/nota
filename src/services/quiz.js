@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:5001/api/quiz';
+const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api/quiz';
 
 async function handleResponse(response) {
     if (response.ok) return response.json();
