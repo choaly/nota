@@ -17,7 +17,7 @@ quizRouter.post('/', async (req, res) => {
 [
   {
     "question": "...?",
-    "options": ["A: Full text of option A", "B: Full text of option B", "C: Full text of option C", "D: Full text of option D"],
+    "options": ["A. Full text of option A", "B. Full text of option B", "C. Full text of option C", "D. Full text of option D"],
     "answer": "Full text of the correct option"
   }
 ]
