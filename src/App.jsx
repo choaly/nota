@@ -28,7 +28,13 @@ function App() {
   const[authMode, setAuthMode] = useState('login');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // Save notes to localStorage whenever notes change
+  // Reset view to dashboard when user changes (login/logout/signup)
+  useEffect(() => {
+    setCurrentView('dashboard');
+    setCurrentNote(null);
+  }, [user]);
+
+  // Fetch notes when user is logged in
   useEffect(() => {
     if (!user) return;  // don't fetch if not logged in
     async function fetchNotes() {
