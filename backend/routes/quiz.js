@@ -13,12 +13,12 @@ quizRouter.post('/', async (req, res) => {
             return res.status(400).json({ message: 'Content is required' });
         }
 
-        const prompt = `Based on the following notes, generate 5 multiple choice quiz questions to test understanding. Return ONLY valid JSON in this exact format, no other text:
+        const prompt = `Based on the following notes, generate 5 multiple choice quiz questions to test understanding. Each question should have 4 answer options with the full text of each option. Return ONLY valid JSON in this exact format, no other text:
 [
   {
-    "question": "...",
-    "options": ["A", "B", "C", "D"],
-    "answer": "The full text of the correct option"
+    "question": "...?",
+    "options": ["Full text of option A", "Full text of option B", "Full text of option C", "Full text of option D"],
+    "answer": "Full text of the correct option"
   }
 ]
 
