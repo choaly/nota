@@ -456,8 +456,105 @@ React (localhost:5173)
 
 ---
 
-## Next Steps
+### ✅ Font & UX Improvements (COMPLETED)
 
-Move to **Phase 3 Part 4: Deployment** (Steps 13-15)
+**What we did**:
+1. Switched global font from Avenir (macOS-only) to **DM Sans** (Google Font) for cross-platform consistency
+2. Added Google Fonts CDN link in `index.html` with preconnect for performance
+3. Replaced font-family overrides in `App.css`, `Login.module.css`, `Signup.module.css` with `font-family: inherit`
+4. Added auto-logout on expired JWT tokens (401 responses clear localStorage and reload)
+
+**Files modified**:
+- `index.html` — added Google Fonts preconnect and DM Sans import
+- `src/index.css` — set global font to `'DM Sans', system-ui, sans-serif`
+- `src/App.css`, `src/components/Login.module.css`, `src/components/Signup.module.css` — changed font overrides to `inherit`
+- `src/services/auth.js` — added 401 auto-logout in `handleResponse` (excludes `/login` and `/signup` URLs)
+- `src/services/notes.js` — added 401 auto-logout in `handleResponse`
+
+**Key concepts**:
+- **System fonts vs web fonts** — Avenir is macOS-only; Google Fonts loads via CDN so all platforms render the same font
+- **`font-family: inherit`** — components inherit the global font instead of declaring their own, making font changes one-line
+- **Auto-logout on 401** — expired tokens are cleared automatically, redirecting to login instead of showing cryptic error messages
+
+---
+
+### ✅ Step 13: Deploy Backend to Render (COMPLETED)
+
+**What we did**:
+1. Created a Web Service on Render connected to the GitHub repo
+2. Set root directory to `backend`, build command to `npm install`, start command to `node server.js`
+3. Added environment variables: `CONNECTION_STRING`, `JWT_SECRET`, `GROQ_API_KEY`, `PORT` (10000)
+4. Opened MongoDB Atlas Network Access to allow all IPs (`0.0.0.0/0`) so Render can connect
+
+**Key learnings**:
+- **Root directory** — tells Render to only look at the `backend/` folder in the monorepo
+- **Environment variables on Render** — set through the dashboard, not `.env` files (which aren't deployed)
+- **MongoDB Atlas Network Access** — by default only your local IP is whitelisted; cloud servers need `0.0.0.0/0` (allow all) to connect
+- **Cold starts** — Render free tier spins down after 15 min of inactivity; first request after that takes 30-50 seconds
+
+---
+
+### ✅ Step 14: Deploy Frontend to Vercel (COMPLETED)
+
+**What we did**:
+1. Created a project on Vercel connected to the GitHub repo
+2. Framework preset: Vite, root directory: `.` (repo root), build command: `npm run build`, output: `dist`
+3. Added `VITE_API_URL` environment variable pointing to the Render backend URL
+4. Updated all frontend service files (`auth.js`, `notes.js`, `quiz.js`) to use `import.meta.env.VITE_API_URL` with localhost fallback
+
+**Files modified**:
+- `src/services/auth.js` — `BASE_URL` uses `VITE_API_URL` env var with fallback
+- `src/services/notes.js` — same pattern
+- `src/services/quiz.js` — same pattern
+
+**Key learnings**:
+- **`import.meta.env.VITE_API_URL`** — Vite's way to access environment variables; must be prefixed with `VITE_` to be exposed to frontend code
+- **Env vars are baked at build time** — Vite replaces `import.meta.env.VITE_API_URL` with the actual value during `npm run build`; changing env vars requires a redeploy
+- **Fallback pattern** — `(import.meta.env.VITE_API_URL || 'http://localhost:5001')` picks the right URL based on environment
+
+---
+
+### ✅ Step 15: Connect Everything — CORS & Bug Fixes (COMPLETED)
+
+**What we did**:
+1. Updated `backend/server.js` CORS config to allow only `localhost:5173` and the Vercel production URL
+2. Fixed bug: profile settings showing after signup (added `useEffect` to reset `currentView` on user change)
+3. Fixed bug: quiz options showing only letters A/B/C/D (improved LLM prompt with descriptive example options)
+
+**Files modified**:
+- `backend/server.js` — replaced `cors()` (allow all) with explicit origin whitelist
+- `src/App.jsx` — added `useEffect` to reset view to dashboard when `user` state changes
+- `backend/routes/quiz.js` — updated prompt example to use descriptive option text instead of letter placeholders
+
+**Key learnings**:
+- **CORS in production** — `cors()` with no arguments allows any origin; in production, whitelist specific domains for security
+- **Stale state across auth transitions** — React state persists across re-renders; `currentView` must be reset on login/logout/signup to avoid showing the wrong page
+- **LLM prompt examples matter** — LLMs mimic the format of examples closely; `["A", "B", "C", "D"]` in the example led to literal letter-only options
+
+---
+
+## Phase 3 Complete!
+
+**What was built across all 4 parts**:
+- User authentication (signup, login, JWT tokens, protected routes)
+- Frontend auth flow (Login/Signup pages, Context, token management)
+- AI-powered quiz generation (Groq API, quiz UI with scoring)
+- Profile Settings page (edit profile, change password, delete account)
+- Header dropdown menu
+- Full deployment (Render backend + Vercel frontend + MongoDB Atlas)
+
+**Production Architecture**:
+```
+Vercel (nota-indol.vercel.app)
+  → React SPA (built with Vite)
+  → services/auth.js → Render backend /api/auth
+  → services/notes.js → Render backend /api/notes
+  → services/quiz.js → Render backend /api/quiz
+
+Render (nota-backend.onrender.com)
+  → Express.js API server
+  → MongoDB Atlas (cloud database)
+  → Groq API (AI quiz generation)
+```
 
 ---

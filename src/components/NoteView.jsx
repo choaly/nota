@@ -1,7 +1,9 @@
 import {useState, useEffect} from 'react'
 import styles from './NoteView.module.css';
 import { generateQuiz } from '../services/quiz';
+import { generateExplainQuestions } from '../services/explain';
 import Quiz from './Quiz';
+import ExplainBack from './ExplainBack';
 import { ChevronLeft } from 'lucide-react';
 
 export default function NoteView({ note, onBack, onSave, onDelete }) {
@@ -11,6 +13,9 @@ export default function NoteView({ note, onBack, onSave, onDelete }) {
 
     const [quizQuestions, setQuizQuestions] = useState(null);
     const [loadingQuiz, setLoadingQuiz] = useState(false);
+
+    const [explainQuestions, setExplainQuestions] = useState(null);
+    const [loadingExplain, setLoadingExplain] = useState(false);
 
     // Update state when note prop changes (when switching between notes)
     useEffect(() => {
@@ -67,7 +72,7 @@ export default function NoteView({ note, onBack, onSave, onDelete }) {
             return;
         }
         setLoadingQuiz(true);
-        
+
         try {
             const data = await generateQuiz(noteContent);
             setQuizQuestions(data.questions);
@@ -75,6 +80,23 @@ export default function NoteView({ note, onBack, onSave, onDelete }) {
             alert('Failed to generate quiz: ' + error.message);
         } finally {
             setLoadingQuiz(false);
+        }
+    }
+
+    const handleExplainBack = async () => {
+        if (!noteContent.trim()) {
+            alert('Write some notes first before starting explain-back!');
+            return;
+        }
+        setLoadingExplain(true);
+
+        try {
+            const data = await generateExplainQuestions(noteContent);
+            setExplainQuestions(data.questions);
+        } catch (error) {
+            alert('Failed to generate questions: ' + error.message);
+        } finally {
+            setLoadingExplain(false);
         }
     }
 
@@ -113,6 +135,10 @@ export default function NoteView({ note, onBack, onSave, onDelete }) {
                         <button className={styles.quizButton} onClick={handleGenerateQuiz} disabled={loadingQuiz}>
                             {loadingQuiz ? 'Generating...' : 'Generate Quiz'}
                         </button>
+
+                        <button className={styles.quizButton} onClick={handleExplainBack} disabled={loadingExplain}>
+                            {loadingExplain ? 'Generating...' : 'Explain Back'}
+                        </button>
                     </div>
                     <button className={styles.deleteButton} onClick={handleDelete}>
                         Delete
@@ -121,6 +147,9 @@ export default function NoteView({ note, onBack, onSave, onDelete }) {
             </main>
             {quizQuestions && (
                 <Quiz questions={quizQuestions} onClose={() => setQuizQuestions(null)} />
+            )}
+            {explainQuestions && (
+                <ExplainBack questions={explainQuestions} onClose={() => setExplainQuestions(null)} />
             )}
         </>
         

@@ -7,6 +7,7 @@ const notesRouter = require('./routes/notes');
 const authRouter = require('./routes/auth');
 const authenticate = require('./middleware/auth');
 const quizRouter = require('./routes/quiz')
+const explainRouter = require('./routes/explain')
 
 const PORT = process.env.PORT || 5001 ;
 
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
 app.use('/api/notes', authenticate, notesRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/quiz', authenticate, quizRouter);
+app.use('/api/explain', authenticate, explainRouter);
 
 app.use((req,res) => {
     res.status(404).json({ message: "No routes matched the request." });

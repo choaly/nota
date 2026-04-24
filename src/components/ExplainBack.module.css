@@ -1,0 +1,279 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.modal {
+    background-color: #E5DFD3;
+    border-radius: 16px;
+    padding: 2.5rem;
+    width: 560px;
+    max-width: 90vw;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.progress {
+    font-size: 0.95rem;
+    color: #7a6e63;
+    margin: 0 0 1.5rem 0;
+    font-weight: 500;
+    text-align: center;
+}
+
+.questionText {
+    font-size: 1.15rem;
+    color: #2B1F14;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.6;
+}
+
+.answerInput {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #c4b9a8;
+    border-radius: 10px;
+    background-color: white;
+    font-size: 1rem;
+    font-family: inherit;
+    color: #2B1F14;
+    resize: vertical;
+    outline: none;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.answerInput:focus {
+    border-color: #4A3628;
+}
+
+.answerInput::placeholder {
+    color: #999;
+}
+
+.submitButton {
+    display: block;
+    width: 100%;
+    padding: 0.85rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #4A3628;
+    color: white;
+    font-size: 1rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.submitButton:hover:not(:disabled) {
+    opacity: 0.85;
+}
+
+.submitButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Feedback after evaluation */
+.feedbackSection {
+    text-align: left;
+}
+
+.ratingBanner {
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.ratingBanner.strong {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.ratingBanner.partial {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.ratingBanner.weak {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.feedbackText {
+    font-size: 1rem;
+    color: #2B1F14;
+    line-height: 1.6;
+    margin: 0 0 1.25rem 0;
+}
+
+.conceptGroup {
+    margin-bottom: 0.75rem;
+}
+
+.conceptLabel {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #7a6e63;
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.conceptTags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.coveredTag,
+.missedTag {
+    padding: 0.3rem 0.65rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.coveredTag {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.missedTag {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.nextButton {
+    display: block;
+    width: 100%;
+    padding: 0.85rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #4A3628;
+    color: white;
+    font-size: 1rem;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 1.25rem;
+}
+
+.nextButton:hover {
+    opacity: 0.85;
+}
+
+/* Complete screen */
+.completeTitle {
+    font-size: 1.75rem;
+    color: #2B1F14;
+    margin: 0 0 1.5rem 0;
+    text-align: center;
+}
+
+.summaryStats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.statNumber {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2B1F14;
+}
+
+.statLabel {
+    font-size: 0.85rem;
+    color: #7a6e63;
+}
+
+.reviewSection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.reviewItem {
+    background-color: white;
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.reviewHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.reviewNumber {
+    font-weight: 600;
+    color: #2B1F14;
+    font-size: 0.9rem;
+}
+
+.ratingBadge {
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.ratingBadge.strong {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.ratingBadge.partial {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.ratingBadge.weak {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.reviewFeedback {
+    font-size: 0.9rem;
+    color: #4A3628;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.closeButton {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #4A3628;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.closeButton:hover {
+    opacity: 0.85;
+}
