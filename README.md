@@ -2,20 +2,14 @@
 
 ## Video Walkthrough
 
----
-
 ## Project Title
 
 **Nota** - AI-Powered Note-Taking App with Explain-Back Quizzing
-
----
 
 ## Problem Statement
 Nota solves the problem of passive note-taking. Students studying dense subjects like computer science or history, professionals learning new domains, and independent learners all take notes constantly, but most note-taking apps are optimized for storage and organization rather than learning specifically. Consequently these apps encourage passive note-taking, which feels productive but is far less effective than active recall. The challenge is that turning notes into quality study materials is tedious and time-consuming, making active recall difficult to adopt consistently.
 Nota solves this problem by instantly transforming your notes into personalized quizzes and study materials so that learning becomes active by default and note-takers retain more knowledge.
 Success means users come back to Nota not just to write notes, but to test themselves using Nota’s quiz generation and explain-back features. Measurable signals would include: users engaging with Explain-Back mode repeatedly, improvements in ratings from “weak” to “strong on the same material over time, and users choosing Nota over other competitors because it pushes them beyond surface-level recall.
-
----
 
 ## Solution Overview
 Nota is a full-stack web application where users can create, edit, organize, and search their notes, and test their understanding through two different AI-powered study modes. The app is built with a React frontend (deployed on Vercel), an Express.js backend (deployed on Render), and MongoDB Atlas for cloud storage.
@@ -27,8 +21,6 @@ Nota is a full-stack web application where users can create, edit, organize, and
 - **Explain-Back mode** — Users are asked open-ended questions and must explain concepts in their own words. The LLM evaluates their explanation for accuracy, identifies which key concepts they covered vs. missed, and gives specific, constructive feedback
 - **Profile management** — edit display name, change password, delete account
 - **Live at** [nota-indol.vercel.app](https://nota-indol.vercel.app)
-
----
 
 ## AI Integration
 For development, I collaborated with Anthropic’s Claude Opus 4.6 model. For Nota’s AI in-app AI features (Quiz and Explain-Back mode), I chose Meta’s Llama 3.3 70B Versatile via Groq. I initially tried to use the Google Gemini API, but a bug in the free tier made it unreliable. Groq offered the best combination of zero cost, low latency, and having an OpenAI-compatible API for easy provider swapping in the future.
@@ -42,8 +34,6 @@ I used temperature 0.5 for generation, and 0.3 for evaluation, to prioritize con
 The main tradeoff considerations were cost, latency, and evaluation accuracy. Groq’s free tier and fast inference made it ideal for an early-stage product. Other API contenders were OpenAI, Claude, and Google Gemini, but those either required rate limiting, a paid tier, or had a buggy free tier. When it comes to accuracy, Llama 3.3 can sometimes be overly generous when grading. I mitigated this through prompt design and lower evaluation temperature, but this is still an area for future tuning.
 
 The AI exceeded my expectations in the quality of Explain-Back feedback--it can accurately pinpoint missing concepts and provide highly specific guidance. Its biggest limitation was prompt sensitivity--early on, the model followed examples more closely than instructions. My initial MCQ prompt had `["A", "B", "C", "D"]` as example options, and the model mimicked that literally. Changing the example to full-text options fixed it, which was a useful lesson in prompt engineering.
-
----
 
 ## Architecture / Design Decisions
 
@@ -74,8 +64,6 @@ The AI exceeded my expectations in the quality of Explain-Back feedback--it can 
 1. **Monorepo, split deployment** - One repo, one git history; each service deploys to a platform optimized for it (Vercel for Single Page Applications, Render for Node.js).
 2. **AI on backend only** - API key never touches the browser. I can swap providers or adjust prompts without a frontend redeploy.
 
----
-
 ## What did AI help you do faster, and where did it get in your way?
 I built Nota with assistance from Claude Code. Before starting, I was already comfortable with HTML, CSS, JavaScript, and React, but had less experience with backend development. I wanted to deepen my skills by building something real, so I used Claude Code for architecture roadmaps, concept explanations, and debugging hints, while writing the code myself.
 
@@ -87,8 +75,6 @@ I built Nota with assistance from Claude Code. Before starting, I was already co
 **Where it fell short:**
 - Sometimes too comprehensive when I wanted to figure things out myself. I had to frame questions as "what should I think about?" instead of "what should I write?"
 **How it changed my approach:** Shifted from "follow a tutorial step-by-step" to "build what I want and learn as I go." I spent more time on architecture and UX, less time stuck on syntax. Rather than using AI to replace learning, I used it to compress the feedback loop. I still had to understand every line of code I wrote, but my learning and building process accelerated from taking weeks to hours.
-
----
 
 ## Getting Started / Setup Instructions
 
@@ -129,8 +115,6 @@ npm run dev
 4. **Explain Back** — open a note, click "Explain Back" to answer open-ended questions in your own words and receive AI-evaluated feedback on your understanding
 5. **Profile** — click your name in the header for settings (edit name, change password, delete account)
 
----
-
 ## Testing / Error Handling
 
 Testing was manual and iterative -- full end-to-end user flow tested after each feature (CRUD, quiz, explain-back, auth, deployment).
@@ -149,8 +133,6 @@ Testing was manual and iterative -- full end-to-end user flow tested after each 
 | Backend | `try-catch` on all async handlers; anti-enumeration on login; Mongoose schema validation; HTML tag stripping for XSS; JWT validation before protected routes |
 | LLM | `JSON.parse()` in try-catch — returns 500 on malformed responses; Groq downtime surfaces as retryable error |
 
----
-
 ## Future Improvements / Stretch Goals
 
 - **Rich text editor** — Replace textarea with TipTap or Slate; use DOMPurify instead of regex sanitization.
@@ -159,8 +141,6 @@ Testing was manual and iterative -- full end-to-end user flow tested after each 
 - **RAG across notes** — Vector embeddings to retrieve related notes and generate cross-topic quizzes. "Quiz me on everything I've written about databases."
 - **Adaptive difficulty** — Multi-step reasoning where the LLM adjusts question difficulty based on prior answers.
 - **Conversational study assistant** — Ask questions about your own notes ("Explain the difference between auth and authorization based on my backend notes"). RAG + conversational AI = a personalized tutor grounded in your material.
-
---
 
 ## Link to website URL or application
 [nota-indol.vercel.app](https://nota-indol.vercel.app)
