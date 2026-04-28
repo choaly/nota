@@ -72,6 +72,7 @@ I built Nota with assistance from Claude Code. Before starting, I was already co
 - **Architecture planning** — Structured the project across phases (localStorage prototype → full-stack → AI features → deployment). I used Claude to generate phase-by-phase development roadmaps, which I then saved as markdown files to reload as context whenever a Claude conversation limit was hit.
 - **Debugging**
 - **Decision-making** — JWT vs. sessions, localStorage vs. cookies, Gemini vs. Groq — laid out tradeoffs so I could make informed choices quickly
+
 **Where it fell short:**
 - Sometimes too comprehensive when I wanted to figure things out myself. I had to frame questions as "what should I think about?" instead of "what should I write?"
 **How it changed my approach:** Shifted from "follow a tutorial step-by-step" to "build what I want and learn as I go." I spent more time on architecture and UX, less time stuck on syntax. Rather than using AI to replace learning, I used it to compress the feedback loop. I still had to understand every line of code I wrote, but my learning and building process accelerated from taking weeks to hours.
