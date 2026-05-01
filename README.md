@@ -1,6 +1,7 @@
 # Klaviyo AI Builder Residency Application
 
 ## Video Walkthrough
+https://www.loom.com/share/082ecd12c98c432cbb9a59d99bb27209
 
 ## Project Title
 
